@@ -121,4 +121,4 @@ Para bloquear las versiones de las dependencias en los archivos `package.json` d
 
 ## Licencia
 
-Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
+Este proyecto está bajo la Licencia MIT.
