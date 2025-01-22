@@ -96,6 +96,40 @@ Para instalar TailwindCSS y el plugin Typography, sigue estos pasos:
     @tailwind utilities;
     ```
 
+## Instalación de Express con JavaScript
+
+Para instalar Express con JavaScript y configurar `type: module`, sigue estos pasos:
+
+1. Crea un nuevo directorio para el backend y navega a él:
+
+    ```bash
+    mkdir backend
+    cd backend
+    ```
+
+2. Inicializa un nuevo proyecto de Node.js:
+
+    ```bash
+    pnpm init
+    ```
+
+3. Instala Express y otras dependencias necesarias:
+
+    ```bash
+    pnpm install express pg dotenv
+    ```
+
+4. Configura el archivo `package.json` para usar módulos ES:
+
+    ```json
+    {
+      "name": "backend",
+      "version": "1.0.0",
+      "main": "src/index.js",
+      "type": "module",
+    }
+    ```
+
 ## Instalación del Proyecto
 
 1. Clona el repositorio:
@@ -131,6 +165,33 @@ Para instalar TailwindCSS y el plugin Typography, sigue estos pasos:
     ```bash
     cd ../frontend
     pnpm run dev
+    ```
+
+## Evitar Actualizaciones de Dependencias
+
+Para evitar actualizaciones de dependencias, asegúrate de usar versiones exactas en los archivos `package.json` del frontend y backend. Por ejemplo:
+
+```json
+"dependencies": {
+  "express": "4.17.1",
+  "pg": "8.6.0"
+}
+```
+
+### Permitir Actualizaciones Específicas
+
+Si deseas permitir actualizaciones menores o mayores para algunas dependencias específicas, puedes usar los siguientes formatos en el archivo `package.json`:
+
+- Para permitir actualizaciones menores (por ejemplo, de `4.17.1` a `4.17.x`):
+
+    ```json
+    "express": "~4.17.1"
+    ```
+
+- Para permitir actualizaciones mayores (por ejemplo, de `4.17.1` a `x.x.x`):
+
+    ```json
+    "express": "^4.17.1"
     ```
 
 ## Funcionalidades
