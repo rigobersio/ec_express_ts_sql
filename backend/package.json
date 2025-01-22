@@ -1,0 +1,13 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "main": "src/index.js",
+    "scripts": {
+        "start": "node src/index.js"
+    },
+    "dependencies": {
+        "express": "4.17.1",
+        "pg": "8.6.0",
+        "dotenv": "10.0.0"
+    }
+}

@@ -30,6 +30,72 @@ Para instalar NVM en Windows, sigue estos pasos:
     nvm use 22.13.1
     ```
 
+## Instalación de React con Vite
+
+Para instalar React con Vite, sigue estos pasos:
+
+1. Crea un nuevo proyecto con Vite:
+
+    ```bash
+    pnpm create vite frontend --template react-ts
+    ```
+
+2. Navega al directorio del proyecto:
+
+    ```bash
+    cd frontend
+    ```
+
+3. Instala las dependencias del proyecto:
+
+    ```bash
+    pnpm install
+    ```
+
+## Instalación de TailwindCSS y Typography Plugin
+
+Para instalar TailwindCSS y el plugin Typography, sigue estos pasos:
+
+1. Instala TailwindCSS y sus dependencias:
+
+    ```bash
+    pnpm install -D tailwindcss postcss autoprefixer
+    ```
+
+2. Inicializa TailwindCSS:
+
+    ```bash
+    npx tailwindcss init -p
+    ```
+
+3. Instala el plugin Typography:
+
+    ```bash
+    pnpm install @tailwindcss/typography
+    ```
+
+4. Configura TailwindCSS en el archivo `tailwind.config.js`:
+
+    ```javascript
+    module.exports = {
+      content: ['./src/**/*.{js,ts,jsx,tsx}'],
+      theme: {
+        extend: {},
+      },
+      plugins: [
+        require('@tailwindcss/typography'),
+      ],
+    };
+    ```
+
+5. Agrega las directivas de TailwindCSS en el archivo CSS principal (`src/index.css`):
+
+    ```css
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+    ```
+
 ## Instalación del Proyecto
 
 1. Clona el repositorio:

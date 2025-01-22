@@ -1,21 +1,12 @@
-import React from 'react';
-import { Outlet, Navigate, Route, Routes } from 'react-router-dom';
-import { useAuth } from './auth';
-import Home from './pages/Home';
-import Login from './pages/Login';
+import './App.css'
 
-const App: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+function App() {
 
   return (
-    <div>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
-      </Routes>
-      <Outlet />
-    </div>
-  );
-};
+    <>
+      <h1>App</h1>
+    </>
+  )
+}
 
-export default App;
+export default App
