@@ -238,14 +238,6 @@ Para bloquear las versiones de las dependencias en los archivos `package.json` d
 }
 ```
 
-## Contribución
-
-1. Haz un fork del proyecto.
-2. Crea una nueva rama (`git checkout -b feature/nueva-funcionalidad`).
-3. Realiza tus cambios y haz commit (`git commit -am 'Añadir nueva funcionalidad'`).
-4. Sube tus cambios (`git push origin feature/nueva-funcionalidad`).
-5. Abre un Pull Request.
-
 ## Licencia
 
 Este proyecto está bajo la Licencia MIT.
