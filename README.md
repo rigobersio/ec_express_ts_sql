@@ -130,6 +130,83 @@ Para instalar Express con JavaScript y configurar `type: module`, sigue estos pa
     }
     ```
 
+## Instalación de Express con TypeScript
+
+Para instalar Express con TypeScript y configurar `type: module`, sigue estos pasos:
+
+1. Crea un nuevo directorio para el backend y navega a él:
+
+    ```bash
+    mkdir backend
+    cd backend
+    ```
+
+2. Inicializa un nuevo proyecto de Node.js:
+
+    ```bash
+    pnpm init
+    ```
+
+3. Instala Express, TypeScript y otras dependencias necesarias:
+
+    ```bash
+    pnpm install express pg dotenv
+    pnpm install -D typescript @types/node @types/express ts-node
+    ```
+
+4. Configura el archivo `package.json` para usar módulos ES:
+
+    ```json
+    {
+      "name": "backend",
+      "version": "1.0.0",
+      "main": "src/index.ts",
+      "type": "module",
+      "scripts": {
+        "start": "ts-node src/index.ts"
+      }
+    }
+    ```
+
+5. Crea un archivo de configuración de TypeScript `tsconfig.json`:
+
+    ```json
+    {
+      "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+      },
+      "include": ["src"]
+    }
+    ```
+
+6. Crea el directorio `src` y un archivo `index.ts` dentro de él:
+
+    ```typescript
+    import express from 'express';
+    import dotenv from 'dotenv';
+
+    dotenv.config();
+
+    const app = express();
+    const port = process.env.PORT || 3000;
+
+    app.get('/', (req, res) => {
+      res.send('Hello World!');
+    });
+
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+    ```
+
 ## Instalación del Proyecto
 
 1. Clona el repositorio:
