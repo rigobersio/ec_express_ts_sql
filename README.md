@@ -30,6 +30,8 @@ Para instalar NVM en Windows, sigue estos pasos:
     nvm use 22.13.1
     ```
 
+# Bitácora
+
 ## Instalación de React con Vite
 
 Para instalar React con Vite, sigue estos pasos:
@@ -96,9 +98,9 @@ Para instalar TailwindCSS y el plugin Typography, sigue estos pasos:
     @tailwind utilities;
     ```
 
-## Instalación de Express con JavaScript
+## Instalación de Express con TS
 
-Para instalar Express con JavaScript y configurar `type: module`, sigue estos pasos:
+Para instalar Express con TS y `CommonJS`, sigue estos pasos:
 
 1. Crea un nuevo directorio para el backend y navega a él:
 
@@ -117,77 +119,80 @@ Para instalar Express con JavaScript y configurar `type: module`, sigue estos pa
 
     ```bash
     pnpm install express pg dotenv
+    pnpm install -D typescript @types/express
     ```
+`ya no es necesario instalar **@types/dotenv** porque dotenv ahora incluye sus propias definiciones (pnpm remove @types/dotenv)`
 
-4. Configura el archivo `package.json` para usar módulos ES:
+4. Configura el archivo `package.json`:
 
     ```json
     {
       "name": "backend",
       "version": "1.0.0",
       "main": "src/index.js",
-      "type": "module",
-    }
-    ```
-
-## Instalación de Express con TypeScript
-
-Para instalar Express con TypeScript y configurar `type: module`, sigue estos pasos:
-
-1. Crea un nuevo directorio para el backend y navega a él:
-
-    ```bash
-    mkdir backend
-    cd backend
-    ```
-
-2. Inicializa un nuevo proyecto de Node.js:
-
-    ```bash
-    pnpm init
-    ```
-
-3. Instala Express, TypeScript y otras dependencias necesarias:
-
-    ```bash
-    pnpm install express pg dotenv
-    pnpm install -D typescript @types/node @types/express ts-node
-    ```
-
-4. Configura el archivo `package.json` para usar módulos ES:
-
-    ```json
-    {
-      "name": "backend",
-      "version": "1.0.0",
-      "main": "src/index.ts",
-      "type": "module",
       "scripts": {
-        "start": "ts-node src/index.ts"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "pnpx tsc",
+        "start": "node dist/index.js",
+        "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+        "test-dev": "echo 'Running test script' && exit 0"
       }
-    }
+    ...
     ```
+"main": "src/index.js": La propiedad main en el archivo package.json especifica el punto de entrada principal del módulo. Es el archivo que se cargará cuando alguien importe tu paquete. En este caso, main está configurado para apuntar a dist/index.js porque este es el archivo JavaScript compilado que se genera después de que TypeScript transpila el código TypeScript.
 
-5. Crea un archivo de configuración de TypeScript `tsconfig.json`:
+Razón para dist/index.js en lugar de index.ts
 
-    ```json
-    {
-      "compilerOptions": {
-        "target": "ESNext",
-        "module": "ESNext",
-        "moduleResolution": "node",
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
-      },
-      "include": ["src"]
-    }
-    ```
+5. Instalación de Dependencias Útiles
 
-6. Crea el directorio `src` y un archivo `index.ts` dentro de él:
+- Cors
+
+Cors (Cross-Origin Resource Sharing) es un mecanismo que permite que los recursos restringidos en una página web sean solicitados desde otro dominio fuera del dominio desde el cual se sirvió el recurso. Para instalar CORS, ejecuta el siguiente comando:
+
+```bash
+pnpm install cors
+```
+
+- Morgan
+
+Morgan es un middleware de registro de solicitudes HTTP para Node.js. Es útil para registrar las solicitudes entrantes y sus detalles. Para instalar Morgan, ejecuta el siguiente comando:
+
+```bash
+pnpm install morgan
+```
+
+- Instalación de los tipos para cors y morgan
+
+```bash
+pnpm install -D @types/cors @types/morgan
+```
+
+6. Inicializar TypeScript.
+
+```bash
+pnpx tsc --init
+```
+El archivo **tsconfig.json** generado indica el directorio raíz de tu aplicación TypeScript. Proporciona opciones de configuración para definir cómo deben trabajar los compiladores de TypeScript. Incluye una serie de opciones de configuración deshabilitadas o habilitadas, con comentarios que explican cada opción.
+
+Añade las siguientes propiedades al objeto `compilerOptions` para definir el directorio de salida y otras configuraciones necesarias:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2024",                        // Compila a ES2024
+    "module": "CommonJS",                      // Usa CommonJS para que Node lo interprete sin problemas
+    "rootDir": "./src",                        // Directorio fuente
+    "outDir": "./dist",                        // Directorio de salida de los archivos compilados
+    "strict": true,                            // Habilita todas las comprobaciones estrictas
+    "esModuleInterop": true,                   // Facilita la interoperabilidad con módulos CommonJS
+    "forceConsistentCasingInFileNames": true,  // Para evitar errores de mayúsculas/minúsculas
+    "skipLibCheck": true                       // Omite la verificación de tipos en las librerías (para acelerar la compilación)
+  },
+  "include": ["src/**/*"]
+}
+```
+
+7. Se creó el directorio `src` y un archivo `index.ts` dentro de él:
 
     ```typescript
     import express from 'express';
@@ -207,41 +212,56 @@ Para instalar Express con TypeScript y configurar `type: module`, sigue estos pa
     });
     ```
 
-## Instalación del Proyecto
+    ```typescript
+    import 'dotenv/config';
+    import server from './src/server';
 
-1. Clona el repositorio:
+    const PORT = process.env.PORT || 3000;
 
-    ```bash
-    git clone <URL_DEL_REPOSITORIO>
-    cd template-ecommece
+    server.listen(PORT, () => {
+      console.log(`Server on port ${PORT}`);
+    });
     ```
 
-2. Instala las dependencias del backend y frontend:
+8. `src/index.ts`
 
-    ```bash
-    cd backend
-    pnpm install
-    cd ../frontend
-    pnpm install
+    ```typescript
+    import express from 'express';
+    import server from './server';
+
+    const app = express();
+    const port = process.env.PORT || 3000;
+
+    app.use(server);
+
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
     ```
 
-3. Configura la base de datos PostgreSQL:
+9. `src/server.ts`
 
-    - Crea una base de datos en PostgreSQL.
-    - Configura las variables de entorno en el archivo `.env` en el directorio `backend` con los detalles de la base de datos.
+    ```typescript
+    import express from 'express';
+    import morgan from 'morgan';
+    import cors from 'cors';
 
-4. Inicia el servidor backend:
+    const URL = process.env.FRONTEND_URL;
+    const server = express();
 
-    ```bash
-    cd backend
-    pnpm start
-    ```
+    server.use(cors({
+      origin: URL,
+      credentials: true,
+    }));
 
-5. Inicia el servidor frontend:
+    server.use(morgan('dev'));
+    server.use(express.json());
 
-    ```bash
-    cd ../frontend
-    pnpm run dev
+    server.get('/', (req, res) => {
+      res.send('API de E-commerce');
+    });
+
+    export default server;
     ```
 
 ## Evitar Actualizaciones de Dependencias
@@ -271,19 +291,42 @@ Si deseas permitir actualizaciones menores o mayores para algunas dependencias e
     "express": "^4.17.1"
     ```
 
-## Funcionalidades
+# Git Clone
 
-### Sistema de Rutas Protegidas
+1. Clona el repositorio:
 
-El sistema de rutas protegidas utiliza `Navigate`, `Outlet`, `createBrowserRouter` y `RouterProvider` de `react-router-dom` para gestionar la navegación y protección de rutas.
+    ```bash
+    git clone <URL_DEL_REPOSITORIO>
+    cd template-ecommece
+    ```
 
-### Vista de Productos
+2. Instala las dependencias del backend y frontend:
 
-La vista de productos incluye filtros por precio, marca y palabras clave. La paginación se implementa donde sea más eficiente (frontend o backend) y los resultados se persisten en `localStorage`.
+    ```bash
+    cd backend
+    pnpm install
+    cd ../frontend
+    pnpm install
+    ```
 
-### Carrito de Compras
+3. Configura la base de datos PostgreSQL:
 
-El carrito de compras incluye persistencia de datos y está integrado con una pasarela de pagos para facilitar las transacciones.
+    - Crea una base de datos en PostgreSQL.
+    - Configura las variables de entorno en el archivo `.env` en el directorio `backend` con los detalles de la base de datos.
+
+4. Inicia el servidor backend:
+
+    ```bash
+    cd backend
+    pnpm run dev
+    ```
+
+5. Inicia el servidor frontend:
+
+    ```bash
+    cd ../frontend
+    pnpm run dev
+    ```
 
 ## Estructura del Proyecto
 
@@ -302,17 +345,6 @@ template-ecommece/
 │   └── ...
 ├── README.md
 └── ...
-```
-
-## Bloquear Versiones de Dependencias
-
-Para bloquear las versiones de las dependencias en los archivos `package.json` del frontend y backend, asegúrate de usar versiones exactas en lugar de rangos de versiones. Por ejemplo:
-
-```json
-"dependencies": {
-  "express": "4.17.1",
-  "pg": "8.6.0"
-}
 ```
 
 ## Licencia

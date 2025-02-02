@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2024",                        // Compila a ES2024
+    "module": "CommonJS",                      // Usa CommonJS para que Node lo interprete sin problemas
+    "rootDir": "./src",                        // Directorio fuente
+    "outDir": "./dist",                        // Directorio de salida de los archivos compilados
+    "strict": true,                            // Habilita todas las comprobaciones estrictas
+    "esModuleInterop": true,                   // Facilita la interoperabilidad con módulos CommonJS
+    "forceConsistentCasingInFileNames": true,  // Para evitar errores de mayúsculas/minúsculas
+    "skipLibCheck": true                       // Omite la verificación de tipos en las librerías (para acelerar la compilación)
+  },
+  "include": ["src/**/*"]
+}

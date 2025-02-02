@@ -1,135 +1,56 @@
-# Bitácora Pedagógica del Backend
+# Estado Actual del Backend
 
-Este archivo registra las configuraciones y cambios realizados en el backend del proyecto SPA E-commerce.
+Este documento describe el estado actual del backend del proyecto, incluyendo las versiones de las dependencias utilizadas.
 
-## Pruebas Iniciales con Postman
-
-Para realizar pruebas iniciales con Postman, sigue estos pasos:
-
-1. Abre Postman.
-2. Crea una nueva solicitud (Request).
-3. Configura la solicitud para que sea de tipo `GET`.
-4. Ingresa la URL del servidor backend (por ejemplo, `http://localhost:3000`).
-5. Haz clic en `Send` para enviar la solicitud.
-6. Deberías recibir una respuesta con un mensaje desde el servidor backend.
-
-## Instalación de Dependencias Útiles
-
-### CORS
-
-CORS (Cross-Origin Resource Sharing) es un mecanismo que permite que los recursos restringidos en una página web sean solicitados desde otro dominio fuera del dominio desde el cual se sirvió el recurso. Para instalar CORS, ejecuta el siguiente comando:
-
-```bash
-pnpm install cors
-```
-
-### Morgan
-
-Morgan es un middleware de registro de solicitudes HTTP para Node.js. Es útil para registrar las solicitudes entrantes y sus detalles. Para instalar Morgan, ejecuta el siguiente comando:
-
-```bash
-pnpm install morgan
-```
-
-## Levantar el Servidor
-
-Para levantar el servidor, actualiza los scripts en el archivo `package.json` y asegúrate de que las dependencias necesarias estén instaladas.
-
-### Actualización de `package.json`
+## package.json
 
 ```json
-// filepath: /c:/repos/mis-apps/template-ecommece/backend/package.json
 {
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "type": "module",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pnpx tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "test-dev": "echo 'Running test script' && exit 0"
   },
   "keywords": [],
   "author": "Rigobersio",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "16.4.7",
-    "express": "4.21.2",
-    "pg": "8.13.1",
-    "cors": "2.8.5",
-    "morgan": "1.10.0"
+    "cors": "~2.8.5",
+    "dotenv": "~16.4.7",
+    "express": "~4.21.2",
+    "morgan": "~1.10.0",
+    "pg": "~8.13.1"
   },
   "devDependencies": {
-    "nodemon": "2.0.22"
+    "@types/cors": "~2.8.17",
+    "@types/express": "~5.0.0",
+    "@types/morgan": "1.9.9",
+    "ts-node-dev": "~2.0.0",
+    "ts-node": "~10.9.1",
+    "typescript": "~5.7.3"
   }
 }
 ```
 
-### Código del Servidor
+## Dependencias
 
-Actualiza el archivo `src/index.js` para incluir las nuevas dependencias y levantar el servidor.
+- **cors**: ^2.8.5
+- **dotenv**: ^16.4.7
+- **express**: ^4.21.2
+- **morgan**: ^1.10.0
+- **pg**: ^8.13.1
 
-```javascript
-// filepath: /c:/repos/mis-apps/template-ecommece/backend/src/index.js
-import 'dotenv/config';
-import app from './App.js';
+## Dependencias de Desarrollo
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Server on port ${PORT}`);
-});
-```
-
-### Código de la Aplicación
-
-Actualiza el archivo `src/App.js` para incluir las nuevas dependencias y la configuración del servidor.
-
-```javascript
-// filepath: /c:/repos/mis-apps/template-ecommece/backend/src/App.js
-import express from 'express';
-import morgan from 'morgan';
-import cors from 'cors';
-
-const URL = process.env.FRONTEND_URL;
-const app = express();
-
-app.use(cors({
-  origin: URL,
-  credentials: true,
-}));
-
-app.use(morgan('dev'));
-app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.send('API de E-commerce');
-});
-
-export default app;
-```
-
-### Variables de Entorno
-
-Para configurar las variables de entorno, crea un archivo `.env` en el directorio `backend` con el siguiente contenido:
-
-```env
-// filepath: /c:/repos/mis-apps/template-ecommece/backend/.env
-PORT=3000
-DATABASE_URL=postgresql://user:password@localhost:5432/mydatabase
-FRONTEND_URL=http://localhost:5173
-```
-
-### Levantar el Servidor
-
-Para levantar el servidor en modo desarrollo, ejecuta el siguiente comando:
-
-```bash
-pnpm run dev
-```
-
-Para levantar el servidor en modo producción, ejecuta el siguiente comando:
-
-```bash
-pnpm start
-```
+- **@types/cors**: ^2.8.17
+- **@types/express**: ^5.0.0
+- **@types/morgan**: ^1.9.9
+- **ts-node-dev**: ^2.0.0
+- **ts-node**: ^10.9.1
+- **typescript**: ^5.7.3
