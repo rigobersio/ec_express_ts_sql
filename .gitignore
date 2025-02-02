@@ -34,7 +34,6 @@ build
 *.sw?
 
 # Frontend specific
-/frontend/pnpm-lock.yaml
 /frontend/node_modules
 /frontend/dist
 /frontend/build

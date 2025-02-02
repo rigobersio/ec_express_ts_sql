@@ -1,3 +1,5 @@
+// tengo que actualizar esto
+
 # React + TypeScript + Vite
 # Comercio Electrónico
 
@@ -247,3 +249,19 @@ En el directorio `public`, se creó un directorio `favicon` con favicones genera
 
 Este instructivo cubre las configuraciones y maquetado inicial del proyecto, proporcionando una base sólida para el desarrollo futuro.
 
+
+---
+
+## Funcionalidades
+
+### Sistema de Rutas Protegidas
+
+El sistema de rutas protegidas utiliza `Navigate`, `Outlet`, `createBrowserRouter` y `RouterProvider` de `react-router-dom` para gestionar la navegación y protección de rutas.
+
+### Vista de Productos
+
+La vista de productos incluye filtros por precio, marca y palabras clave. La paginación se implementa donde sea más eficiente (frontend o backend) y los resultados se persisten en `localStorage`.
+
+### Carrito de Compras
+
+El carrito de compras incluye persistencia de datos y está integrado con una pasarela de pagos para facilitar las transacciones.

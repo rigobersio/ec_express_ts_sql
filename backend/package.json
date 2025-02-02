@@ -2,20 +2,30 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "type": "module",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pnpx tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "test-dev": "echo 'Running test script' && exit 0"
   },
   "keywords": [],
   "author": "Rigobersio",
   "license": "ISC",
   "dependencies": {
-    "cors": "2.8.5",
-    "dotenv": "16.4.7",
-    "express": "4.21.2",
-    "morgan": "1.10.0",
-    "pg": "8.13.1"
+    "cors": "~2.8.5",
+    "dotenv": "~16.4.7",
+    "express": "~4.21.2",
+    "morgan": "~1.10.0",
+    "pg": "~8.13.1"
+  },
+  "devDependencies": {
+    "@types/cors": "~2.8.17",
+    "@types/express": "~5.0.0",
+    "@types/morgan": "1.9.9",
+    "ts-node-dev": "~2.0.0",
+    "ts-node": "~10.9.1",
+    "typescript": "~5.7.3"
   }
 }
