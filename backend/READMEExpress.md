@@ -1,6 +1,6 @@
 # Estado Actual del Backend
 
-Este documento describe el estado actual del backend del proyecto, incluyendo las versiones de las dependencias utilizadas y una explicación detallada de los archivos `server.ts`, `userRoutes.ts`, `authMiddleware.ts`, `userController.ts` y `userHandler.ts`.
+Este documento describe el estado actual del backend del proyecto, incluyendo las versiones de las dependencias utilizadas y una explicación detallada de los archivos `server.ts`, `mainRouter.ts`, `usersRoutes.ts`, `authMiddleware.ts`, `getUsersController.ts` y `userHandler.ts`.
 
 ## package.json
 
@@ -63,7 +63,7 @@ El archivo `server.ts` es donde se configura el servidor Express. Aquí se confi
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import userRoutes from './routes/userRoutes';
+import mainRouter from './routes/mainRouter';
 
 const URL = process.env.FRONTEND_URL;
 const server = express();
@@ -76,7 +76,7 @@ server.use(cors({
 server.use(morgan('dev'));
 server.use(express.json());
 
-server.use('/api', userRoutes);
+server.use(mainRouter);
 
 server.get('/', (req, res) => {
   res.send('API de E-commerce');
@@ -90,7 +90,7 @@ export default server;
 - `express`: Importa el framework Express.
 - `morgan`: Importa el middleware Morgan para el registro de solicitudes HTTP.
 - `cors`: Importa el middleware CORS para permitir solicitudes de diferentes orígenes.
-- `userRoutes`: Importa las rutas relacionadas con los usuarios desde el archivo `userRoutes.ts`.
+- `mainRouter`: Importa las rutas principales desde el archivo `mainRouter.ts`.
 
 ### Configuración del Servidor
 
@@ -113,31 +113,60 @@ El método `use` en Express se utiliza para montar middleware en la aplicación.
 
 ### Rutas
 
-- `server.use('/api', userRoutes);`: Configura las rutas relacionadas con los usuarios bajo el prefijo `/api`.
+- `server.use(mainRouter);`: Configura las rutas principales.
 - `server.get('/', (req, res) => { res.send('API de E-commerce'); });`: Define una ruta raíz que responde con un mensaje simple.
 
 ### Exportación
 
 - `export default server;`: Exporta la instancia del servidor para que pueda ser utilizada en otros archivos.
 
-## Descripción del archivo `userRoutes.ts`
+## Descripción del archivo `mainRouter.ts`
 
-El archivo `userRoutes.ts` define las rutas relacionadas con los usuarios. A continuación se describe cada sección del archivo:
+El archivo `mainRouter.ts` define las rutas principales de la aplicación. A continuación se describe cada sección del archivo:
+
+```typescript
+import { Router } from 'express';
+import usersRoutes from './usersRoutes';
+
+const mainRouter = Router();
+
+mainRouter.use('/users', usersRoutes);
+
+export default mainRouter;
+```
+
+### Importaciones
+
+- `Router`: Importa el enrutador de Express para definir las rutas.
+- `usersRoutes`: Importa las rutas relacionadas con los usuarios desde el archivo `usersRoutes.ts`.
+
+### Definición de Rutas
+
+- `const mainRouter = Router();`: Crea una instancia del enrutador de Express.
+- `mainRouter.use('/users', usersRoutes);`: Configura las rutas relacionadas con los usuarios bajo el prefijo `/users`.
+
+### Exportación
+
+- `export default mainRouter;`: Exporta la instancia del enrutador principal para que pueda ser utilizada en otros archivos.
+
+## Descripción del archivo `usersRoutes.ts`
+
+El archivo `usersRoutes.ts` define las rutas relacionadas con los usuarios. A continuación se describe cada sección del archivo:
 
 ```typescript
 import { Router } from 'express';
 import { handleGetUsers, handleGetUserById, handleCreateUser, handleUpdateUser, handleDeleteUser } from '../handlers/userHandler';
 import { authMiddleware } from '../middlewares/authMiddleware';
 
-const router = Router();
+const usersRoutes = Router();
 
-router.get('/users', authMiddleware, handleGetUsers);
-router.get('/users/:id', authMiddleware, handleGetUserById);
-router.post('/users', authMiddleware, handleCreateUser);
-router.put('/users/:id', authMiddleware, handleUpdateUser);
-router.delete('/users/:id', authMiddleware, handleDeleteUser);
+usersRoutes.get('/get', authMiddleware, handleGetUsers);
+usersRoutes.get('/get/:id', authMiddleware, handleGetUserById);
+usersRoutes.post('/post', authMiddleware, handleCreateUser);
+usersRoutes.put('/put/:id', authMiddleware, handleUpdateUser);
+usersRoutes.delete('/delete/:id', authMiddleware, handleDeleteUser);
 
-export default router;
+export default usersRoutes;
 ```
 
 ### Importaciones
@@ -148,19 +177,19 @@ export default router;
 
 ### Definición de Rutas
 
-- `const router = Router();`: Crea una instancia del enrutador de Express.
+- `const usersRoutes = Router();`: Crea una instancia del enrutador de Express.
 
 ### Rutas de Usuario
 
-- `router.get('/users', authMiddleware, handleGetUsers);`: Define una ruta GET para obtener todos los usuarios. Aplica el middleware de autenticación antes de llamar al manejador `handleGetUsers`.
-- `router.get('/users/:id', authMiddleware, handleGetUserById);`: Define una ruta GET para obtener un usuario por ID. Aplica el middleware de autenticación antes de llamar al manejador `handleGetUserById`.
-- `router.post('/users', authMiddleware, handleCreateUser);`: Define una ruta POST para crear un nuevo usuario. Aplica el middleware de autenticación antes de llamar al manejador `handleCreateUser`.
-- `router.put('/users/:id', authMiddleware, handleUpdateUser);`: Define una ruta PUT para actualizar un usuario por ID. Aplica el middleware de autenticación antes de llamar al manejador `handleUpdateUser`.
-- `router.delete('/users/:id', authMiddleware, handleDeleteUser);`: Define una ruta DELETE para eliminar un usuario por ID. Aplica el middleware de autenticación antes de llamar al manejador `handleDeleteUser`.
+- `usersRoutes.get('/get', authMiddleware, handleGetUsers);`: Define una ruta GET para obtener todos los usuarios. Aplica el middleware de autenticación antes de llamar al manejador `handleGetUsers`.
+- `usersRoutes.get('/get/:id', authMiddleware, handleGetUserById);`: Define una ruta GET para obtener un usuario por ID. Aplica el middleware de autenticación antes de llamar al manejador `handleGetUserById`.
+- `usersRoutes.post('/post', authMiddleware, handleCreateUser);`: Define una ruta POST para crear un nuevo usuario. Aplica el middleware de autenticación antes de llamar al manejador `handleCreateUser`.
+- `usersRoutes.put('/put/:id', authMiddleware, handleUpdateUser);`: Define una ruta PUT para actualizar un usuario por ID. Aplica el middleware de autenticación antes de llamar al manejador `handleUpdateUser`.
+- `usersRoutes.delete('/delete/:id', authMiddleware, handleDeleteUser);`: Define una ruta DELETE para eliminar un usuario por ID. Aplica el middleware de autenticación antes de llamar al manejador `handleDeleteUser`.
 
 ### Exportación
 
-- `export default router;`: Exporta la instancia del enrutador para que pueda ser utilizada en otros archivos.
+- `export default usersRoutes;`: Exporta la instancia del enrutador para que pueda ser utilizada en otros archivos.
 
 ## Descripción del archivo `authMiddleware.ts`
 
@@ -215,44 +244,30 @@ En JavaScript, el middleware se define sin tipos, lo que puede llevar a errores 
 
 En el ejemplo de TypeScript, los tipos de los parámetros `req`, `res` y `next` se definen como `Request`, `Response` y `NextFunction`, respectivamente. Esto permite detectar errores en tiempo de compilación si los parámetros no se utilizan correctamente.
 
-## Descripción del archivo `userController.ts`
+## Descripción del archivo `getUsersController.ts`
 
-El archivo `userController.ts` define la lógica de negocio relacionada con los usuarios. A continuación se describe cada sección del archivo:
+El archivo `getUsersController.ts` define la lógica de negocio para obtener todos los usuarios. A continuación se describe cada sección del archivo:
 
 ```typescript
-export const getUsers = (): string => {
-  // Lógica para obtener todos los usuarios
-  return 'Get all users';
-};
+import { usersDatabase } from '../database/usersDatabase';
 
-export const getUserById = (id: string): string => {
-  // Lógica para obtener un usuario por ID
-  return `Get user with ID: ${id}`;
-};
-
-export const createUser = (name: string, email: string): string => {
-  // Lógica para crear un nuevo usuario
-  return `Create user with name: ${name} and email: ${email}`;
-};
-
-export const updateUser = (id: string, name: string, email: string): string => {
-  // Lógica para actualizar un usuario por ID
-  return `Update user with ID: ${id}, name: ${name}, email: ${email}`;
-};
-
-export const deleteUser = (id: string): string => {
-  // Lógica para eliminar un usuario por ID
-  return `Delete user with ID: ${id}`;
+export const getUsers = (): typeof usersDatabase => {
+  // Retorna todos los usuarios simulados
+  return usersDatabase;
 };
 ```
 
-### Funciones del Controlador de Usuario
+### Importaciones
 
-- `getUsers`: Lógica para obtener todos los usuarios.
-- `getUserById`: Lógica para obtener un usuario por ID.
-- `createUser`: Lógica para crear un nuevo usuario.
-- `updateUser`: Lógica para actualizar un usuario por ID.
-- `deleteUser`: Lógica para eliminar un usuario por ID.
+- `usersDatabase`: Importa la base de datos simulada de usuarios desde `usersDatabase.ts`.
+
+### Función `getUsers`
+
+- `export const getUsers = (): typeof usersDatabase => { ... }`: Define y exporta la función `getUsers` que retorna todos los usuarios simulados.
+
+### Lógica de Negocio
+
+- `return usersDatabase;`: Retorna todos los usuarios simulados desde la base de datos.
 
 ## Descripción del archivo `userHandler.ts`
 
@@ -260,11 +275,15 @@ El archivo `userHandler.ts` maneja las solicitudes y respuestas relacionadas con
 
 ```typescript
 import { Request, Response } from 'express';
-import { getUsers, getUserById, createUser, updateUser, deleteUser } from '../controllers/userController';
+import { getUsers } from '../controllers/getUsersController';
+import { getUserById } from '../controllers/getUserByIdController';
+import { createUser } from '../controllers/createUserController';
+import { updateUser } from '../controllers/updateUserController';
+import { deleteUser } from '../controllers/deleteUserController';
 
 export const handleGetUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-    const result = await getUsers();
+    const result = getUsers();
     res.send(result);
   } catch (error) {
     res.status(500).send('Error getting users');
@@ -274,7 +293,7 @@ export const handleGetUsers = async (req: Request, res: Response): Promise<void>
 export const handleGetUserById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const result = await getUserById(id);
+    const result = getUserById(id);
     res.send(result);
   } catch (error) {
     res.status(500).send('Error getting user by ID');
@@ -284,7 +303,7 @@ export const handleGetUserById = async (req: Request, res: Response): Promise<vo
 export const handleCreateUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email } = req.body;
-    const result = await createUser(name, email);
+    const result = createUser(name, email);
     res.send(result);
   } catch (error) {
     res.status(500).send('Error creating user');
@@ -295,7 +314,7 @@ export const handleUpdateUser = async (req: Request, res: Response): Promise<voi
   try {
     const { id } = req.params;
     const { name, email } = req.body;
-    const result = await updateUser(id, name, email);
+    const result = updateUser(id, name, email);
     res.send(result);
   } catch (error) {
     res.status(500).send('Error updating user');
@@ -305,7 +324,7 @@ export const handleUpdateUser = async (req: Request, res: Response): Promise<voi
 export const handleDeleteUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const result = await deleteUser(id);
+    const result = deleteUser(id);
     res.send(result);
   } catch (error) {
     res.status(500).send('Error deleting user');
@@ -316,7 +335,7 @@ export const handleDeleteUser = async (req: Request, res: Response): Promise<voi
 ### Importaciones
 
 - `Request`, `Response`: Importa los tipos de Express para definir los tipos de los parámetros de las funciones manejadoras.
-- `getUsers`, `getUserById`, `createUser`, `updateUser`, `deleteUser`: Importa las funciones del controlador de usuario desde `userController.ts`.
+- `getUsers`, `getUserById`, `createUser`, `updateUser`, `deleteUser`: Importa las funciones del controlador de usuario desde `getUsersController.ts` y otros controladores.
 
 ### Funciones Manejadoras
 
@@ -336,13 +355,16 @@ backend/
 ├── node_modules/
 ├── src/
 │   ├── controllers/
-│   │   └── userController.ts
+│   │   └── getUsersController.ts
+│   ├── database/
+│   │   └── usersDatabase.ts
 │   ├── handlers/
 │   │   └── userHandler.ts
 │   ├── middlewares/
 │   │   └── authMiddleware.ts
 │   ├── routes/
-│   │   └── userRoutes.ts
+│   │   ├── mainRouter.ts
+│   │   └── usersRoutes.ts
 │   ├── server.ts
 │   └── index.ts
 ├── package.json
@@ -351,9 +373,10 @@ backend/
 
 ### Descripción de los Directorios
 
-- **controllers/**: Contiene los controladores que gestionan la lógica de negocio. En este caso, `userController.ts` gestiona las operaciones relacionadas con los usuarios.
+- **controllers/**: Contiene los controladores que gestionan la lógica de negocio. En este caso, `getUsersController.ts` gestiona la operación para obtener todos los usuarios.
+- **database/**: Contiene la base de datos simulada de usuarios. En este caso, `usersDatabase.ts` define los usuarios simulados.
 - **handlers/**: Contiene los manejadores de solicitudes que gestionan las respuestas HTTP. En este caso, `userHandler.ts` maneja las solicitudes relacionadas con los usuarios.
 - **middlewares/**: Contiene los middlewares que se utilizan en el servidor. En este caso, `authMiddleware.ts` gestiona la autenticación.
-- **routes/**: Contiene las rutas que definen los endpoints de la API. En este caso, `userRoutes.ts` define las rutas relacionadas con los usuarios.
+- **routes/**: Contiene las rutas que definen los endpoints de la API. En este caso, `mainRouter.ts` define las rutas principales y `usersRoutes.ts` define las rutas relacionadas con los usuarios.
 - **server.ts**: Archivo donde se configuran los middlewares, las rutas y se exporta la instancia del servidor.
 - **index.ts**: Archivo de entrada que inicia el servidor.
