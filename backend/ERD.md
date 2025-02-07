@@ -68,6 +68,7 @@ Es importante diseñar la base de datos de manera que pueda escalarse fácilment
 | role            |       | stock           |       | order_date      |
 | wallet          |       | discount        |       | address_id (FK) |
 +-----------------+       | brand_id (FK)   |       +-----------------+
+                          | image_urls      |
                           +-----------------+
 
 +-----------------+       +-----------------+       +-----------------+
@@ -140,7 +141,7 @@ Para evitar problemas con las claves foráneas, las tablas deben ser creadas en 
 
 ### Explicación de las Relaciones
 - **users**: Cada usuario tiene un `id` único, un `name`, un `email` único, un `password` encriptado, un `role` y un `wallet`.
-- **products**: Cada producto tiene un `id` único, un `name`, una `description`, un `price`, un `stock`, un `discount`, y un `brand_id` que referencia a la tabla `brands`.
+- **products**: Cada producto tiene un `id` único, un `name`, una `description`, un `price`, un `stock`, un `discount`, un `brand_id` que referencia a la tabla `brands` y `image_urls`.
 - **orders**: Cada orden tiene un `id` único, un `user_id` que referencia a la tabla `users`, un `status`, un `total_price`, una `order_date` y un `address_id` que referencia a la tabla `addresses`.
 - **addresses**: Cada dirección tiene un `id` único, un `user_id` que referencia a la tabla `users`, un `address_line1`, un `address_line2`, una `city`, un `state`, un `postal_code`, un `country` y un `address_type`.
 - **order_items**: Cada ítem de orden tiene un `id` único, un `order_id` que referencia a la tabla `orders`, un `product_id` que referencia a la tabla `products`, una `quantity`, un `unit_price` y un `total_price`.

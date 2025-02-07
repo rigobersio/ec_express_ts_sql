@@ -256,17 +256,38 @@ CREATE TABLE purchase_history (
 );
 ```
 
-### Insertar Datos en las Tablas `users` y `products`
+### Agregar un Nuevo Campo `image_urls` a la Tabla `products`
+Para agregar un nuevo campo `image_urls` a la tabla `products`, utiliza el siguiente comando SQL:
+
 ```sql
--- Insertar usuarios
-INSERT INTO users (name, email, password, role, wallet) VALUES
-('Juan Pérez', 'juan.perez@example.com', 'password123', 'cliente', 100.00),
-('María López', 'maria.lopez@example.com', 'password456', 'cliente', 150.00);
+ALTER TABLE products
+ADD COLUMN image_urls TEXT;
 
 -- Insertar productos
 INSERT INTO products (name, description, price, stock, discount, brand_id) VALUES
 ('Producto A', 'Descripción del Producto A', 29.99, 50, 10.00, NULL),
 ('Producto B', 'Descripción del Producto B', 49.99, 30, 5.00, NULL);
+```
+### Agregar un Nuevo Campo `image_urls` a la Tabla `products`
+Para agregar un nuevo campo `image_urls` a la tabla `products`, utiliza el siguiente comando SQL:
+
+```sql
+ALTER TABLE products
+ADD COLUMN image_urls TEXT;
+```
+
+### Insertar URLs de Imágenes en los Productos Existentes
+Para agregar URLs de imágenes a los productos que ya existen, utiliza el siguiente comando SQL:
+
+```sql
+-- Actualizar productos con URLs de imágenes
+UPDATE products
+SET image_urls = '["https://example.com/productoA1.jpg", "https://example.com/productoA2.jpg", "https://example.com/productoA3.jpg", "https://example.com/productoA4.jpg"]'
+WHERE name = 'Producto A';
+
+UPDATE products
+SET image_urls = '["https://example.com/productoB1.jpg", "https://example.com/productoB2.jpg", "https://example.com/productoB3.jpg", "https://example.com/productoB4.jpg"]'
+WHERE name = 'Producto B';
 ```
 
 ### Explicación de los Comandos SQL
