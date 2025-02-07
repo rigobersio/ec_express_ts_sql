@@ -31,6 +31,7 @@ Este documento describe el estado actual del backend del proyecto, incluyendo la
     "@types/cors": "~2.8.17",
     "@types/express": "~5.0.0",
     "@types/morgan": "1.9.9",
+    "@types/pg": "~8.11.11",
     "ts-node-dev": "~2.0.0",
     "ts-node": "~10.9.1",
     "typescript": "~5.7.3"
@@ -51,6 +52,7 @@ Este documento describe el estado actual del backend del proyecto, incluyendo la
 - **@types/cors**: ^2.8.17
 - **@types/express**: ^5.0.0
 - **@types/morgan**: ^1.9.9
+- **@types/pg**: ^8.11.11
 - **ts-node-dev**: ^2.0.0
 - **ts-node**: ^10.9.1
 - **typescript**: ^5.7.3
@@ -249,25 +251,36 @@ En el ejemplo de TypeScript, los tipos de los parámetros `req`, `res` y `next` 
 El archivo `getUsersController.ts` define la lógica de negocio para obtener todos los usuarios. A continuación se describe cada sección del archivo:
 
 ```typescript
-import { usersDatabase } from '../database/usersDatabase';
+import pool from '../database/connection';
 
-export const getUsers = (): typeof usersDatabase => {
-  // Retorna todos los usuarios simulados
-  return usersDatabase;
+export const getUsers = async (): Promise<any[]> => {
+  const client = await pool.connect();
+  try {
+    const res = await client.query('SELECT * FROM users');
+    return res.rows;
+  } catch (error) {
+    console.error('Error executing query', error);
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 ```
 
 ### Importaciones
 
-- `usersDatabase`: Importa la base de datos simulada de usuarios desde `usersDatabase.ts`.
+- `pool`: Importa la conexión a la base de datos desde `connection.ts`.
 
 ### Función `getUsers`
 
-- `export const getUsers = (): typeof usersDatabase => { ... }`: Define y exporta la función `getUsers` que retorna todos los usuarios simulados.
+- `export const getUsers = async (): Promise<any[]> => { ... }`: Define y exporta la función `getUsers` que retorna todos los usuarios de la base de datos.
 
-### Lógica de Negocio
+### Lógica
 
-- `return usersDatabase;`: Retorna todos los usuarios simulados desde la base de datos.
+- `const client = await pool.connect();`: Obtiene una conexión del pool de conexiones.
+- `const res = await client.query('SELECT * FROM users');`: Ejecuta una consulta SQL para obtener todos los usuarios.
+- `return res.rows;`: Retorna los registros obtenidos de la consulta.
+- `client.release();`: Libera la conexión de vuelta al pool de conexiones.
 
 ## Descripción del archivo `userHandler.ts`
 
@@ -276,58 +289,16 @@ El archivo `userHandler.ts` maneja las solicitudes y respuestas relacionadas con
 ```typescript
 import { Request, Response } from 'express';
 import { getUsers } from '../controllers/getUsersController';
-import { getUserById } from '../controllers/getUserByIdController';
-import { createUser } from '../controllers/createUserController';
-import { updateUser } from '../controllers/updateUserController';
-import { deleteUser } from '../controllers/deleteUserController';
 
 export const handleGetUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-    const result = getUsers();
-    res.send(result);
+    const result = await getUsers();
+    res.status(200).json({
+      message: "List users",
+      result
+    });
   } catch (error) {
     res.status(500).send('Error getting users');
-  }
-};
-
-export const handleGetUserById = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const result = getUserById(id);
-    res.send(result);
-  } catch (error) {
-    res.status(500).send('Error getting user by ID');
-  }
-};
-
-export const handleCreateUser = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { name, email } = req.body;
-    const result = createUser(name, email);
-    res.send(result);
-  } catch (error) {
-    res.status(500).send('Error creating user');
-  }
-};
-
-export const handleUpdateUser = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const { name, email } = req.body;
-    const result = updateUser(id, name, email);
-    res.send(result);
-  } catch (error) {
-    res.status(500).send('Error updating user');
-  }
-};
-
-export const handleDeleteUser = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const result = deleteUser(id);
-    res.send(result);
-  } catch (error) {
-    res.status(500).send('Error deleting user');
   }
 };
 ```
@@ -335,15 +306,13 @@ export const handleDeleteUser = async (req: Request, res: Response): Promise<voi
 ### Importaciones
 
 - `Request`, `Response`: Importa los tipos de Express para definir los tipos de los parámetros de las funciones manejadoras.
-- `getUsers`, `getUserById`, `createUser`, `updateUser`, `deleteUser`: Importa las funciones del controlador de usuario desde `getUsersController.ts` y otros controladores.
+- `getUsers`: Importa la función `getUsers` desde `getUsersController.ts`.
 
-### Funciones Manejadoras
+### Función `handleGetUsers`
 
-- `handleGetUsers`: Maneja la solicitud para obtener todos los usuarios y envía la respuesta. Utiliza `async/await` y `try-catch` para manejar errores.
-- `handleGetUserById`: Maneja la solicitud para obtener un usuario por ID y envía la respuesta. Utiliza `async/await` y `try-catch` para manejar errores.
-- `handleCreateUser`: Maneja la solicitud para crear un nuevo usuario y envía la respuesta. Utiliza `async/await` y `try-catch` para manejar errores.
-- `handleUpdateUser`: Maneja la solicitud para actualizar un usuario por ID y envía la respuesta. Utiliza `async/await` y `try-catch` para manejar errores.
-- `handleDeleteUser`: Maneja la solicitud para eliminar un usuario por ID y envía la respuesta. Utiliza `async/await` y `try-catch` para manejar errores.
+- `export const handleGetUsers = async (req: Request, res: Response): Promise<void> => { ... }`: Define y exporta la función `handleGetUsers` que maneja la solicitud para obtener todos los usuarios y envía la respuesta.
+- `const result = await getUsers();`: Llama a la función `getUsers` para obtener todos los usuarios.
+- `res.status(200).json({ message: "List users", result });`: Envía la respuesta con el estado 200 y los usuarios obtenidos.
 
 ## Árbol de Directorios del Backend
 
@@ -354,7 +323,7 @@ backend/
 ├── dist/
 ├── node_modules/
 ├── src/
-│   ├── controllers/
+│   ├── controllers/users
 │   │   └── getUsersController.ts
 │   ├── database/
 │   │   └── usersDatabase.ts
@@ -380,3 +349,13 @@ backend/
 - **routes/**: Contiene las rutas que definen los endpoints de la API. En este caso, `mainRouter.ts` define las rutas principales y `usersRoutes.ts` define las rutas relacionadas con los usuarios.
 - **server.ts**: Archivo donde se configuran los middlewares, las rutas y se exporta la instancia del servidor.
 - **index.ts**: Archivo de entrada que inicia el servidor.
+
+## Referencias a Otros Archivos de Documentación
+
+- **Diagrama de Entidad-Relación**: Los detalles sobre el diagrama de entidad-relación están en [ERD.md](./ERD.md).
+- **Configuraciones y Despliegue de la Base de Datos**: Las configuraciones y despliegue de la base de datos están en [DatabaseSetup.md](./DatabaseSetup.md).
+- **Integración de la Base de Datos con Express**: La integración de la base de datos con Express está en [DBExpress.md](./DBExpress.md).
+- **Detalles sobre SQL**: Otros detalles sobre SQL están en [SQL.md](./SQL.md).
+
+### Nota
+En este servidor Express con TypeScript no se utiliza un ORM, sino que se trabaja directamente con SQL.
