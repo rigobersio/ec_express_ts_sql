@@ -34,14 +34,19 @@ Las relaciones entre tablas pueden ser:
 ### Tipos de Datos en PostgreSQL
 PostgreSQL admite varios tipos de datos, incluyendo:
 
-- **UUID**: Identificador único universal.
-- **INTEGER**: Número entero.
-- **VARCHAR(n)**: Cadena de texto con un límite máximo de `n` caracteres.
-- **TEXT**: Cadena de texto de longitud variable sin límite máximo.
+- **UUID**: Un identificador único universal. Ejemplo: `id UUID PRIMARY KEY DEFAULT uuid_generate_v4()`.
+  - Ventajas: Garantiza unicidad global, útil en sistemas distribuidos, no revela información sobre el orden de inserción.
+  - Desventajas: Ocupa más espacio (16 bytes), puede ser más lento en comparación con INTEGER debido a su tamaño.
+- **INTEGER**: Un número entero. Ejemplo: `age INTEGER`.
+  - Ventajas: Ocupa menos espacio (4 bytes), más rápido en comparación con UUID, fácil de leer y manejar.
+  - Desventajas: Limitado a 2,147,483,647 valores únicos, puede revelar información sobre el orden de inserción.
+- **SERIAL**: Un número entero que se incrementa automáticamente. Ejemplo: `id SERIAL PRIMARY KEY`.
+- **VARCHAR(n)**: Una cadena de texto de longitud variable con un límite máximo de `n` caracteres. Ejemplo: `name VARCHAR(100)`.
+- **TEXT**: Una cadena de texto de longitud variable sin límite máximo. Ejemplo: `description TEXT`.
+- **BOOLEAN**: Un valor booleano (`TRUE` o `FALSE`). Ejemplo: `is_active BOOLEAN`.
+- **DATE**: Una fecha (año, mes, día). Ejemplo: `birthdate DATE`.
+- **TIMESTAMP**: Una marca de tiempo (fecha y hora). Ejemplo: `created_at TIMESTAMP`.
 - **DECIMAL(p, s)**: Número decimal con `p` dígitos en total y `s` decimales.
-- **BOOLEAN**: Valor booleano (`TRUE` o `FALSE`).
-- **DATE**: Fecha (año, mes, día).
-- **TIMESTAMP**: Marca de tiempo (fecha y hora).
 
 ### Claves Primarias y Foráneas
 - **Clave Primaria (PK)**: Identificador único para cada fila en una tabla.
@@ -129,5 +134,24 @@ CREATE TABLE ejemplo (
 INSERT INTO ejemplo (nombre) VALUES ('Ejemplo 1'), ('Ejemplo 2');
 ```
 
+### Lista de Comandos Básicos
 
- 
+#### Entrar en una Base de Datos y Salir
+- **Conectar a una Base de Datos**: `\c nombre_base_datos`
+- **Salir de la Base de Datos**: `\q`
+
+#### Entrar en una Tabla y Salir
+- **Describir una Tabla**: `\d nombre_tabla`
+- **Listar Tablas**: `\dt`
+
+#### Agregar una Nueva Entrada en una Tabla con Todos los Datos
+```sql
+INSERT INTO nombre_tabla (columna1, columna2, columna3) VALUES (valor1, valor2, valor3);
+```
+
+#### Agregar una Nueva Entrada en una Tabla con Algunos Datos
+```sql
+INSERT INTO nombre_tabla (columna1, columna2) VALUES (valor1, valor2);
+```
+
+
