@@ -1,11 +1,15 @@
-import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
-// import valor global de autenticación 
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useStore } from '../store/store';
 
 const ProtectedRoutes: React.FC = () => {
-  const isAuthenticated: boolean = true; // ajustar esto para que sea una variable global
+  const token = useStore((state) => state.token);
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
+  return <Outlet />;
 };
 
 export default ProtectedRoutes;
