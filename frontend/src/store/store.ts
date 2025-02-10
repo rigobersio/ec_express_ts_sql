@@ -18,12 +18,21 @@ interface Product {
 }
 
 const createState: StateCreator<State> = (set) => ({
-    user: null,
-    token: null,
-    role: null,
-    setUser: (user: string | null) => set({ user }),
-    setToken: (token: string | null) => set({ token }),
-    setRole: (role: string | null) => set({ role }),
+    user: localStorage.getItem('user'),
+    token: localStorage.getItem('token'),
+    role: localStorage.getItem('role'),
+    setUser: (user: string | null) => {
+        localStorage.setItem('user', user || '');
+        set({ user });
+    },
+    setToken: (token: string | null) => {
+        localStorage.setItem('token', token || '');
+        set({ token });
+    },
+    setRole: (role: string | null) => {
+        localStorage.setItem('role', role || '');
+        set({ role });
+    },
     products: [],
     setProducts: (products: Product[]) => set({ products }),
 });

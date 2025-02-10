@@ -4,10 +4,6 @@
 
 Zustand es una librería de gestión de estado para aplicaciones React. Fue creada por Jovi De Croock y es conocida por su simplicidad y eficiencia. A diferencia de otras librerías de gestión de estado como Redux, Zustand no requiere boilerplate adicional y es muy fácil de configurar y usar.
 
-### Simulación de Autenticación
-
-Vamos a simular que el backend nos envía un token de seguridad. Este token se utilizará para permitir el acceso a componentes protegidos en el frontend.
-
 ## Instalación de Zustand
 
 Instala Zustand en el frontend usando pnpm:
@@ -16,19 +12,7 @@ Instala Zustand en el frontend usando pnpm:
 pnpm add zustand
 ```
 
-## Conectarse con el servidor Express
-
-Para más detalles sobre cómo conectar el frontend con el backend, consulta el documento [Conexión del Frontend con el Backend](./conexion-backend.md).
-
-### Configuración de Variables de Entorno
-
-Asegúrate de tener un archivo `.env` en el directorio `frontend` con la URL del backend:
-
-```env
-VITE_BACKEND_URL=http://localhost:3000
-```
-
-### Configuración Inicial de Zustand
+## Configuración Inicial de Zustand
 
 Crea un archivo para definir tu tienda (store). Por ejemplo, puedes crear un archivo `store.ts` en el directorio `src/store`.
 
@@ -37,138 +21,216 @@ Crea un archivo para definir tu tienda (store). Por ejemplo, puedes crear un arc
 En TypeScript, una interface es una forma de definir la estructura de un objeto. Nos permite especificar qué propiedades y métodos debe tener un objeto. Vamos a desglosar las interfaces `State` y `Product` utilizadas en nuestro ejemplo:
 
 ```typescript
-// filepath: /c:/Users/costero/repos/un-momentum/template-ecommerce/frontend/src/store/store.ts
-import create from 'zustand';
+// template-ecommerce/frontend/src/store/store.ts
+import { create, StateCreator } from 'zustand';
 
+// Definimos la interface State que describe la estructura del estado global
 interface State {
-  user: string | null;
-  token: string | null;
-  setUser: (user: string | null) => void;
-  setToken: (token: string | null) => void;
-  products: Product[];
-  setProducts: (products: Product[]) => void;
+  user: string | null; // Propiedad para almacenar el nombre del usuario autenticado
+  token: string | null; // Propiedad para almacenar el token de autenticación
+  role: string | null; // Propiedad para almacenar el rol del usuario (admin o cliente)
+  setUser: (user: string | null) => void; // Método para actualizar la propiedad user
+  setToken: (token: string | null) => void; // Método para actualizar la propiedad token
+  setRole: (role: string | null) => void; // Método para actualizar la propiedad role
+  products: Product[]; // Propiedad para almacenar una lista de productos
+  setProducts: (products: Product[]) => void; // Método para actualizar la lista de productos
 }
 
+// Definimos la interface Product que describe la estructura de un producto
 interface Product {
-  id: number;
-  name: string;
-  price: number;
+  id: number; // Identificador único del producto
+  name: string; // Nombre del producto
+  price: number; // Precio del producto
 }
+
+// Creamos una función que define el estado inicial y los métodos para actualizar el estado
+const createState: StateCreator<State> = (set) => ({
+  user: localStorage.getItem('user'), // Inicializamos la propiedad user con el valor almacenado en localStorage
+  token: localStorage.getItem('token'), // Inicializamos la propiedad token con el valor almacenado en localStorage
+  role: localStorage.getItem('role'), // Inicializamos la propiedad role con el valor almacenado en localStorage
+  setUser: (user: string | null) => {
+    localStorage.setItem('user', user || ''); // Almacenamos el valor de user en localStorage
+    set({ user }); // Actualizamos el estado global con el nuevo valor de user
+  },
+  setToken: (token: string | null) => {
+    localStorage.setItem('token', token || ''); // Almacenamos el valor de token en localStorage
+    set({ token }); // Actualizamos el estado global con el nuevo valor de token
+  },
+  setRole: (role: string | null) => {
+    localStorage.setItem('role', role || ''); // Almacenamos el valor de role en localStorage
+    set({ role }); // Actualizamos el estado global con el nuevo valor de role
+  },
+  products: [], // Inicializamos la propiedad products como un arreglo vacío
+  setProducts: (products: Product[]) => set({ products }), // Método para actualizar la lista de productos
+});
+
+// Exportamos el hook useStore que utilizaremos en nuestros componentes para acceder y actualizar el estado
+export const useStore = create<State>(createState);
 ```
 
-#### Interface `State`
+### Explicación Detallada del Archivo `store.ts`
 
-La interface `State` define el estado de nuestra tienda. Contiene las siguientes propiedades y métodos:
+1. **Importaciones**:
+   - `import { create, StateCreator } from 'zustand';`: Importamos la función `create` y el tipo `StateCreator` de la librería Zustand. La función `create` se utiliza para crear la tienda (store) y `StateCreator` es un tipo que nos ayuda a definir la estructura del estado.
 
-- `user: string | null`: Esta propiedad almacena el nombre del usuario autenticado. Puede ser una cadena de texto (nombre del usuario) o `null` si no hay ningún usuario autenticado.
-- `token: string | null`: Esta propiedad almacena el token de autenticación. Puede ser una cadena de texto (el token) o `null` si no hay ningún token disponible.
-- `setUser: (user: string | null) => void`: Este método permite actualizar la propiedad `user`. Recibe un parámetro `user` que puede ser una cadena de texto o `null`. La palabra clave `void` indica que este método no devuelve ningún valor.
-- `setToken: (token: string | null) => void`: Este método permite actualizar la propiedad `token`. Recibe un parámetro `token` que puede ser una cadena de texto o `null`. La palabra clave `void` indica que este método no devuelve ningún valor.
-- `products: Product[]`: Esta propiedad almacena una lista de productos. Es un arreglo de objetos `Product`.
-- `setProducts: (products: Product[]) => void`: Este método permite actualizar la lista de productos. Recibe un parámetro `products` que es un arreglo de objetos `Product`. La palabra clave `void` indica que este método no devuelve ningún valor.
+2. **Definición de Interfaces**:
+   - `interface State`: Define la estructura del estado global. Contiene propiedades para almacenar el nombre del usuario (`user`), el token de autenticación (`token`), el rol del usuario (`role`), una lista de productos (`products`), y métodos para actualizar estas propiedades (`setUser`, `setToken`, `setRole`, `setProducts`).
+   - `interface Product`: Define la estructura de un producto. Contiene propiedades para almacenar el identificador único del producto (`id`), el nombre del producto (`name`) y el precio del producto (`price`).
 
-#### Interface `Product`
+3. **Función `createState`**:
+   - Esta función define el estado inicial y los métodos para actualizar el estado. Utiliza la función `set` proporcionada por Zustand para actualizar el estado.
+   - `user`, `token` y `role` se inicializan con los valores almacenados en `localStorage` para hacer persistente la información de autenticación.
+   - Los métodos `setUser`, `setToken` y `setRole` actualizan tanto el estado global como los valores en `localStorage`.
+   - `products` se inicializa como un arreglo vacío y el método `setProducts` se utiliza para actualizar la lista de productos.
 
-La interface `Product` define la estructura de un producto. Contiene las siguientes propiedades:
+4. **Exportación del Hook `useStore`**:
+   - `export const useStore = create<State>(createState);`: Exportamos el hook `useStore` que utilizaremos en nuestros componentes para acceder y actualizar el estado global.
 
-- `id: number`: Esta propiedad almacena el identificador único del producto. Es un número.
-- `name: string`: Esta propiedad almacena el nombre del producto. Es una cadena de texto.
-- `price: number`: Esta propiedad almacena el precio del producto. Es un número.
+### Explicación de `setUser` y `useStore`
 
-### Creación de la Tienda con Zustand
+1. **Declaración de `setUser`**:
+   - `const setUser = useStore((state) => state.setUser);`: Aquí estamos declarando una constante `setUser` y asignándole el valor retornado por la función `useStore`. La función `useStore` toma una función como argumento `(state) => state.setUser` y devuelve el método `setUser` del estado global.
 
-Ahora vamos a crear la tienda utilizando Zustand. La tienda se define utilizando la función `create` de Zustand, que recibe una función que define el estado inicial y los métodos para actualizar el estado.
+2. **Función `useStore`**:
+   - `useStore` es un hook creado por Zustand que nos permite acceder y actualizar el estado global. Cuando llamamos a `useStore`, le pasamos una función que toma el estado actual como argumento (`state`) y devuelve la propiedad o método que queremos extraer del estado. En este caso, estamos extrayendo el método `setUser`.
 
-```typescript
-export const useStore = create<State>((set) => ({
-  user: null,
-  token: null,
-  setUser: (user) => set({ user }),
-  setToken: (token) => set({ token }),
-  products: [],
-  setProducts: (products) => set({ products }),
-}));
-```
+3. **Función `create`**:
+   - La función `create` de Zustand se utiliza para crear la tienda (store). Toma una función que define el estado inicial y los métodos para actualizar el estado (`createState`) y devuelve un hook (`useStore`) que podemos usar en nuestros componentes.
 
-- `useStore`: Es el hook que utilizaremos en nuestros componentes para acceder y actualizar el estado.
-- `set`: Es una función proporcionada por Zustand que permite actualizar el estado.
+4. **Función `createState`**:
+   - La función `createState` define el estado inicial y los métodos para actualizar el estado. Utiliza la función `set` proporcionada por Zustand para actualizar el estado. Cuando llamamos a `setUser`, estamos llamando al método `setUser` definido en `createState`, que actualiza tanto el estado global como el valor en `localStorage`.
 
 ## Uso de la Tienda en Componentes
 
 Ahora que tienes tu tienda configurada, puedes usarla en tus componentes. Aquí hay un ejemplo de cómo usar la tienda en un componente:
 
+### Ejemplo: `SimulateToken.tsx`
+
+Este componente simula la autenticación de un usuario y genera un token. Utiliza Zustand para almacenar la información de autenticación y TailwindCSS para los estilos.
+
 ```tsx
-// filepath: /c:/Users/costero/repos/un-momentum/template-ecommerce/frontend/src/components/ProductList.tsx
-import React, { useEffect } from 'react';
+// /template-ecommerce/frontend/src/pages/SimulateToken.tsx
+import React, { useState } from 'react';
 import { useStore } from '../store/store';
-import axios from 'axios';
+import { getUserByEmail } from '../api/auth';
+import { Link } from 'react-router-dom';
 
-const ProductList: React.FC = () => {
-  const products = useStore((state) => state.products);
-  const setProducts = useStore((state) => state.setProducts);
+const SimulateToken: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products`);
-        setProducts(response.data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
+  const setUser = useStore((state) => state.setUser);
+  const setToken = useStore((state) => state.setToken);
+  const setRole = useStore((state) => state.setRole);
+  const role = useStore((state) => state.role);
+
+  const handleLogin = async () => {
+    setError(null);
+    try {
+      const response = await getUserByEmail(email);
+      if (response.result === 'No user found') {
+        setError('Usuario no encontrado');
+      } else if (response.result && response.result.password === password) {
+        const user = response.result;
+        console.log(user);
+        const token = 'simulated-token'; // Simulamos un token
+        setUser(user.name);
+        setToken(token);
+        setRole(user.role);
+      } else {
+        setError('Correo o contraseña incorrectos');
       }
-    };
-
-    fetchProducts();
-  }, [setProducts]);
+    } catch (err) {
+      setError('Error al autenticar');
+    }
+  };
 
   return (
-    <div>
-      <h1>Lista de Productos</h1>
-      <ul>
-        {products.map((product) => (
-          <li key={product.id}>
-            {product.name} - ${product.price}
-          </li>
-        ))}
-      </ul>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-2xl font-bold mb-4">Simular Token</h1>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Correo Electrónico"
+        className="mb-2 p-2 border border-gray-300 rounded"
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Contraseña"
+        className="mb-2 p-2 border border-gray-300 rounded"
+      />
+      <button
+        onClick={handleLogin}
+        className="mb-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Iniciar Sesión
+      </button>
+      {error && <p className="text-red-500">{error}</p>}
+      <div className="mt-4">
+        {role === "cliente" && (
+          <Link to="/profile" className="text-blue-500 font-bold">
+            Ir a Perfil
+          </Link>
+        )}
+        {role === 'admin' && (
+          <Link to="/admin" className="text-blue-500 font-bold ml-4">
+            Ir a Admin
+          </Link>
+        )}
+      </div>
+      <div className="mt-8 p-4 bg-white rounded shadow-md">
+        <h2 className="text-xl font-bold mb-2">Usuarios de Prueba</h2>
+        <div className="mb-4">
+          <p><strong>Email:</strong> adminalfa@adminalfa.com</p>
+          <p><strong>Password:</strong> admin1234</p>
+          <p><strong>Role:</strong> admin</p>
+        </div>
+        <div>
+          <p><strong>Email:</strong> maria.lopez@example.com</p>
+          <p><strong>Password:</strong> password456</p>
+          <p><strong>Role:</strong> cliente</p>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default ProductList;
+export default SimulateToken;
 ```
 
-## Integración con Rutas Protegidas
+### Explicación del Componente `SimulateToken.tsx`
 
-Para manejar rutas protegidas, puedes usar Zustand para almacenar el estado del usuario y verificar si está autenticado. Aquí hay un ejemplo de cómo hacerlo:
+1. **Importaciones**:
+   - `import React, { useState } from 'react';`: Importamos React y el hook `useState` para manejar el estado local del componente.
+   - `import { useStore } from '../store/store';`: Importamos el hook `useStore` para acceder y actualizar el estado global.
+   - `import { getUserByEmail } from '../api/auth';`: Importamos la función `getUserByEmail` para consultar al backend por un usuario mediante su correo electrónico.
+   - `import { Link } from 'react-router-dom';`: Importamos el componente `Link` de `react-router-dom` para la navegación entre rutas.
 
-```tsx
-// filepath: /c:/Users/costero/repos/un-momentum/template-ecommerce/frontend/src/components/ProtectedRoute.tsx
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import { useStore } from '../store/store';
+2. **Estado Local**:
+   - `const [email, setEmail] = useState<string>('');`: Estado local para almacenar el correo electrónico ingresado por el usuario.
+   - `const [password, setPassword] = useState<string>('');`: Estado local para almacenar la contraseña ingresada por el usuario.
+   - `const [error, setError] = useState<string | null>(null);`: Estado local para almacenar mensajes de error.
 
-const ProtectedRoute: React.FC<{ component: React.FC; path: string }> = ({ component: Component, path }) => {
-  const token = useStore((state) => state.token);
+3. **Acceso al Estado Global**:
+   - `const setUser = useStore((state) => state.setUser);`: Aquí estamos declarando una constante `setUser` y asignándole el valor retornado por la función `useStore`. La función `useStore` toma una función como argumento `(state) => state.setUser` y devuelve el método `setUser` del estado global. `state` es el estado actual de la tienda (store) y `state.setUser` es el método definido en `createState` para actualizar la propiedad `user`.
+   - `const setToken = useStore((state) => state.setToken);`: Similar a `setUser`, esta línea extrae el método `setToken` del estado global.
+   - `const setRole = useStore((state) => state.setRole);`: Similar a `setUser`, esta línea extrae el método `setRole` del estado global.
+   - `const role = useStore((state) => state.role);`: Similar a `setUser`, esta línea extrae la propiedad `role` del estado global.
 
-  return (
-    <Route
-      path={path}
-      render={(props) =>
-        token ? <Component {...props} /> : <Redirect to="/login" />
-      }
-    />
-  );
-};
+4. **Manejo del Login**:
+   - `const handleLogin = async () => { ... };`: Función asincrónica que maneja el proceso de autenticación.
+   - `const response = await getUserByEmail(email);`: Consultamos al backend por un usuario mediante su correo electrónico.
+   - `if (response.result === 'No user found') { ... }`: Verificamos si el usuario no fue encontrado y mostramos un mensaje de error.
+   - `else if (response.result && response.result.password === password) { ... }`: Verificamos si la contraseña ingresada coincide con la del usuario y simulamos un token de autenticación.
+   - `setUser(user.name); setToken(token); setRole(user.role);`: Actualizamos el estado global con el nombre del usuario, el token y el rol.
 
-export default ProtectedRoute;
-```
-
-## Conclusión
-
-Zustand es una herramienta poderosa y fácil de usar para la gestión de estado en aplicaciones React. Con esta guía, deberías poder integrar Zustand en tu proyecto de e-commerce y manejar el estado de manera eficiente. A medida que tu proyecto crezca, puedes expandir tu tienda para incluir más estados y acciones según sea necesario.
-
-¡Feliz codificación!
-
-
-
+5. **Renderizado del Componente**:
+   - Utilizamos TailwindCSS para los estilos del componente.
+   - Mostramos un formulario para ingresar el correo electrónico y la contraseña.
+   - Mostramos enlaces para navegar a `/profile` y `/admin` según el rol del usuario.
+   - Mostramos la información de dos usuarios de prueba en la parte baja del contenedor.
 
