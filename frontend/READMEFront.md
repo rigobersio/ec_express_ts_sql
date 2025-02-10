@@ -1,5 +1,3 @@
-// tengo que actualizar esto
-
 # React + TypeScript + Vite
 # Comercio Electrónico
 
@@ -100,7 +98,9 @@ import LogoutPage from './pages/LogoutPage';
 import GalleryPage from './pages/GalleryPage';
 import ProfilePage from './pages/ProfilePage';
 import PaymentGateway from './pages/PaymentGateway';
+import PanelAdmin from './pages/PanelAdmin';
 import ProtectedRoutes from './components/ProtectedRoutes';
+import AdminRoute from './components/AdminRoute';
 import Error from './components/Error';
 
 function App() {
@@ -171,9 +171,24 @@ function App() {
           ),
           errorElement: <Error />
         },
+        {
+          element: <AdminRoute />,
+          children: [
+            {
+              path: "/admin",
+              element: (
+                <MainLayout>
+                  <PanelAdmin />
+                </MainLayout>
+              ),
+              errorElement: <Error />
+            }
+          ]
+        }
       ]
     }
   ]);
+
   return (
     <RouterProvider router={router} />
   );
@@ -215,15 +230,37 @@ export default MainLayout;
 ```tsx
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-// import valor global de autenticación 
+import { useStore } from '../store/store';
 
 const ProtectedRoutes: React.FC = () => {
-  const isAuthenticated: boolean = true; // ajustar esto para que sea una variable global
+  const token = useStore((state) => state.token);
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
+  return <Outlet />;
 };
 
 export default ProtectedRoutes;
+```
+
+#### `AdminRoute`
+
+`AdminRoute` es un componente que se utiliza para proteger la ruta del panel administrativo. Verifica si el usuario tiene el rol de administrador antes de permitir el acceso a la ruta protegida.
+
+```tsx
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useStore } from '../store/store';
+
+const AdminRoute: React.FC = () => {
+  const role = useStore((state) => state.role);
+
+  return role === 'admin' ? <Outlet /> : <Navigate to="/profile" />;
+};
+
+export default AdminRoute;
 ```
 
 ### Creación de Favicon
@@ -249,7 +286,6 @@ En el directorio `public`, se creó un directorio `favicon` con favicones genera
 
 Este instructivo cubre las configuraciones y maquetado inicial del proyecto, proporcionando una base sólida para el desarrollo futuro.
 
-
 ---
 
 ## Funcionalidades
@@ -265,3 +301,113 @@ La vista de productos incluye filtros por precio, marca y palabras clave. La pag
 ### Carrito de Compras
 
 El carrito de compras incluye persistencia de datos y está integrado con una pasarela de pagos para facilitar las transacciones.
+
+---
+
+## Últimas Actualizaciones
+
+### Integración de Zustand
+
+Se ha integrado Zustand para la gestión de estados globales en la aplicación. Zustand es una librería de gestión de estado para aplicaciones React, conocida por su simplicidad y eficiencia. La configuración inicial de Zustand se encuentra en el archivo `store.ts` en el directorio `src/store`.
+
+### Conexión con el Backend
+
+Se ha configurado Axios para realizar solicitudes HTTP al backend. Axios es una librería basada en promesas para realizar solicitudes HTTP en el navegador y Node.js. La configuración de Axios se encuentra en el archivo `axiosConfig.ts` en el directorio `src/api`.
+
+### Ejemplo de Componente: `SimulateToken.tsx`
+
+Se ha creado un componente `SimulateToken.tsx` que simula la autenticación de un usuario y genera un token. Utiliza Axios para realizar la solicitud de autenticación y Zustand para almacenar la información de autenticación.
+
+```tsx
+// filepath: /c:/Users/costero/repos/un-momentum/template-ecommerce/frontend/src/pages/SimulateToken.tsx
+import React, { useState } from 'react';
+import { useStore } from '../store/store';
+import { getUserByEmail } from '../api/auth';
+import { Link } from 'react-router-dom';
+
+const SimulateToken: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+
+  const setUser = useStore((state) => state.setUser);
+  const setToken = useStore((state) => state.setToken);
+  const setRole = useStore((state) => state.setRole);
+  const role = useStore((state) => state.role);
+
+  const handleLogin = async () => {
+    setError(null);
+    try {
+      const response = await getUserByEmail(email);
+      if (response.result === 'No user found') {
+        setError('Usuario no encontrado');
+      } else if (response.result && response.result.password === password) {
+        const user = response.result;
+        console.log(user);
+        const token = 'simulated-token'; // Simulamos un token
+        setUser(user.name);
+        setToken(token);
+        setRole(user.role);
+      } else {
+        setError('Correo o contraseña incorrectos');
+      }
+    } catch (err) {
+      setError('Error al autenticar');
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h1 className="text-2xl font-bold mb-4">Simular Token</h1>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Correo Electrónico"
+        className="mb-2 p-2 border border-gray-300 rounded"
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Contraseña"
+        className="mb-2 p-2 border border-gray-300 rounded"
+      />
+      <button
+        onClick={handleLogin}
+        className="mb-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Iniciar Sesión
+      </button>
+      {error && <p className="text-red-500">{error}</p>}
+      <div className="mt-4">
+        {role === "cliente" && (
+          <Link to="/profile" className="text-blue-500 font-bold">
+            Ir a Perfil
+          </Link>
+        )}
+        {role === 'admin' && (
+          <Link to="/admin" className="text-blue-500 font-bold ml-4">
+            Ir a Admin
+          </Link>
+        )}
+      </div>
+      <div className="mt-8 p-4 bg-white rounded shadow-md">
+        <h2 className="text-xl font-bold mb-2">Usuarios de Prueba</h2>
+        <div className="mb-4">
+          <p><strong>Email:</strong> adminalfa@adminalfa.com</p>
+          <p><strong>Password:</strong> admin1234</p>
+          <p><strong>Role:</strong> admin</p>
+        </div>
+        <div>
+          <p><strong>Email:</strong> maria.lopez@example.com</p>
+          <p><strong>Password:</strong> password456</p>
+          <p><strong>Role:</strong> cliente</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SimulateToken;
+```
