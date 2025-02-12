@@ -17,8 +17,8 @@ body {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-  color: #333;
-  background: linear-gradient(to right, #e0f7fa 0%, #a7ffeb 100%);
+  color: #061609;
+  background: linear-gradient(to right, #f9f9f9 0%, #cac79f 100%);
   line-height: 1.6;
 }
 
@@ -54,7 +54,7 @@ h1 {
   font-family: "Tangerine", system-ui;
   font-weight: 700;
   font-style: normal;
-  color: #2e7d32;
+  color: #1b3c3e;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 120px;
 
@@ -66,7 +66,7 @@ h2 {
   font-family: "Tangerine", system-ui;
   font-weight: 800;
   font-size: 82px;
-  color: #388e3c;
+  color: #b8847a;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -74,7 +74,7 @@ h3 {
   font-family: "Merriweather";
   font-size: 20px;
   font-weight: 600;
-  color: #388e3c;
+  color: #b8847a;
 }
 
 h4 {
@@ -83,7 +83,7 @@ h4 {
   font-style: normal;
   font-size: 40px;
   margin: 20px 0;
-  color: #43a047;
+  color: #1b3c3e;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -101,7 +101,7 @@ p {
 }
 
 a {
-  color: #43a047;
+  color: #1b3c3e;
   transition: all 0.3s;
   font-size: 15px;
 }
@@ -109,7 +109,7 @@ a {
 a:hover,
 a:focus {
   text-decoration: none;
-  color: #2e7d32;
+  color: #061609;
 }
 
 ul,
@@ -130,7 +130,7 @@ hr {
   width: 70px;
   text-align: center;
   position: relative;
-  background: #43a047;
+  background: #1b3c3e;
   margin-bottom: 20px;
   border: 0;
 }
@@ -146,7 +146,7 @@ hr {
   position: relative;
   cursor: pointer;
   font-family: "Merriweather", sans-serif;
-  color: #388e3c;
+  color: #b8847a;
   font-size: 15px;
   font-weight: 500;
   padding: 0 2px;
@@ -162,12 +162,12 @@ hr {
   bottom: -2px;
   width: 0;
   height: 2px;
-  background: linear-gradient(to right, #43a047 0%, #2e7d32 100%);
+  background: linear-gradient(to right, #b8847a 0%, #1b3c3e 100%);
   transition: width 0.2s ease-in-out;
 }
 
 #navbar .nav-item:hover {
-  color: #43a047;
+  color: #b8847a;
 }
 
 #navbar .nav-item:hover::after {
@@ -179,7 +179,7 @@ hr {
   font-family: "Raleway", sans-serif;
   font-weight: 700;
   font-size: 1.4rem;
-  color: #43a047;
+  color: #b8847a;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   margin: 6px;
   white-space: nowrap;
@@ -187,7 +187,7 @@ hr {
 }
 
 #navbar a:hover .nav-title {
-  color: #2e7d32;
+  color: #1b3c3e;
 }
 
 /* titulo */
@@ -203,7 +203,7 @@ hr {
 .section-title h2::after {
   position: absolute;
   content: "";
-  background: linear-gradient(to right, #43a047 0%, #2e7d32 100%);
+  background: linear-gradient(to right, #b8847a 0%, #1b3c3e 100%);
   height: 4px;
   width: 60px;
   bottom: 0;
