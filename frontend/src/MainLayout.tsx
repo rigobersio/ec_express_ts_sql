@@ -4,9 +4,11 @@ import Footer from './components/Footer';
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div>
+    <div className='flex flex-col min-h-screen w-[100%]'>
       <NavBar />
-      {children}
+      <main className="flex-grow">
+        {children}
+      </main>
       <Footer />
     </div>
   );
