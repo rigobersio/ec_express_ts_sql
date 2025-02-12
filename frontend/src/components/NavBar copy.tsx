@@ -83,10 +83,10 @@ const NavBar: React.FC = () => {
 
   return (
     <nav>
-      <div className="w-[100%] h-10vh flex justify-between z-50 bg-[#5D9C59] text-yellow-50 lg:py-5 pl-20 pr-1 py-4">
+      <div className="h-10vh flex justify-between z-50 bg-[#5D9C59] text-yellow-50 lg:py-5 pl-20 pr-1 py-4">
         <div className="flex items-center justify-between w-[40%]">
           <span className="text-3xl font-bold mr-3 lg:mr-0"><MdOutlineAddReaction /></span>
-          <div className=" flex items-center ml-3 space-x-4">
+          <div className="lg:hidden flex items-center ml-3 space-x-4">
             <button className="w-8 h-8">
               <img src="/flag-chile.svg" alt="Chile Flag" className="w-full h-full object-cover" />
             </button>
