@@ -1,4 +1,5 @@
 # Proyecto SPA E-commerce
+###### El lado del cliente está en https://github.com/rigobersio/ec_vite6_react_Tail4_ts
 
 Este proyecto es una aplicación de e-commerce de una sola página (SPA) utilizando una arquitectura monorepo. El backend utiliza PostgreSQL y Express, mientras que el frontend está implementado con React, Vite, TailwindCSS (con el plugin Typography) y la gestión de estados globales con Zustand.
 
