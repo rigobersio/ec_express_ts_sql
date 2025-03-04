@@ -307,5 +307,5 @@ WHERE name = 'Producto B';
 
 ## Configuración de la Conexión a la Base de Datos
 
-Para más detalles sobre la integración de la base de datos con Express y la manipulación de la misma mediante TypeScript en los controladores, consulta el archivo [DB_Integration_Express_TS.md](./DBExpressTS.md).
+Para más detalles sobre la integración de la base de datos con Express y la manipulación de la misma mediante TypeScript en los controladores, consulta el archivo [DBExpress.md](./DBExpress.md).
 
